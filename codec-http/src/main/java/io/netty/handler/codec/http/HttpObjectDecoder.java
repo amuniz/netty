@@ -384,7 +384,7 @@ public abstract class HttpObjectDecoder extends ReplayingDecoder<State> {
 
         // Handle the last unfinished message.
         if (message != null) {
-            boolean chunked = HttpHeaders.isTransferEncodingChunked(message);
+            boolean chunked = HttpHeaderUtil.isTransferEncodingChunked(message);
             if (state() == State.READ_VARIABLE_LENGTH_CONTENT && !in.isReadable() && !chunked) {
                 // End of connection.
                 out.add(LastHttpContent.EMPTY_LAST_CONTENT);
@@ -529,9 +529,9 @@ public abstract class HttpObjectDecoder extends ReplayingDecoder<State> {
         State nextState;
 
         if (isContentAlwaysEmpty(message)) {
-            HttpHeaders.removeTransferEncodingChunked(message);
+            HttpHeaderUtil.setTransferEncodingChunked(message, false);
             nextState = State.SKIP_CONTROL_CHARS;
-        } else if (HttpHeaders.isTransferEncodingChunked(message)) {
+        } else if (HttpHeaderUtil.isTransferEncodingChunked(message)) {
             nextState = State.READ_CHUNK_SIZE;
         } else if (contentLength() >= 0) {
             nextState = State.READ_FIXED_LENGTH_CONTENT;
@@ -543,7 +543,7 @@ public abstract class HttpObjectDecoder extends ReplayingDecoder<State> {
 
     private long contentLength() {
         if (contentLength == Long.MIN_VALUE) {
-            contentLength = HttpHeaders.getContentLength(message, -1);
+            contentLength = HttpHeaderUtil.getContentLength(message, -1);
         }
         return contentLength;
     }

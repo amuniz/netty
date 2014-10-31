@@ -26,6 +26,7 @@ import io.netty.handler.codec.http.CookieDecoder;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpContent;
+import io.netty.handler.codec.http.HttpHeaderUtil;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpObject;
@@ -113,14 +114,14 @@ public class HttpUploadServerHandler extends SimpleChannelInboundHandler<HttpObj
             responseContent.append("\r\n\r\n");
 
             // new getMethod
-            for (Entry<CharSequence, CharSequence> entry : request.headers()) {
+            for (Entry<String, String> entry : request.headers()) {
                 responseContent.append("HEADER: " + entry.getKey() + '=' + entry.getValue() + "\r\n");
             }
             responseContent.append("\r\n\r\n");
 
             // new getMethod
             Set<Cookie> cookies;
-            String value = request.headers().getAndConvert(COOKIE);
+            String value = request.headers().get(COOKIE);
             if (value == null) {
                 cookies = Collections.emptySet();
             } else {
@@ -158,7 +159,7 @@ public class HttpUploadServerHandler extends SimpleChannelInboundHandler<HttpObj
                 return;
             }
 
-            readingChunks = HttpHeaders.isTransferEncodingChunked(request);
+            readingChunks = HttpHeaderUtil.isTransferEncodingChunked(request);
             responseContent.append("Is Chunked: " + readingChunks + "\r\n");
             responseContent.append("IsMultipart: " + decoder.isMultipart() + "\r\n");
             if (readingChunks) {
@@ -303,7 +304,7 @@ public class HttpUploadServerHandler extends SimpleChannelInboundHandler<HttpObj
         }
 
         Set<Cookie> cookies;
-        String value = request.headers().getAndConvert(COOKIE);
+        String value = request.headers().get(COOKIE);
         if (value == null) {
             cookies = Collections.emptySet();
         } else {
