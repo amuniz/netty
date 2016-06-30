@@ -7,6 +7,6 @@ node ('docker && ubuntu') {
 
 def prepareNode() {
   sh 'apt-get -q -y install autoconf'
-  sh 'apt-get -q install -y openjdk-8-jdk'
+  sh 'apt-get -q install -y default-jdk'
   sh 'apt-get -q clean -y && rm -rf /var/lib/apt/lists/* && rm -f /var/cache/apt/*.bin'
 }
