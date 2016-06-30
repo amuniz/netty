@@ -7,6 +7,6 @@ node ('docker && ubuntu') {
 
 def prepareNode() {
   sh 'apt-get -q -y install autoconf'
-  sh 'DEBIAN_FRONTEND="noninteractive" apt-get -q install -y -o Dpkg::Options::="--force-confnew" --no-install-recommends openjdk-7-jre-headless'
+  sh 'apt-get -q install -y openjdk-8-jdk'
   sh 'apt-get -q clean -y && rm -rf /var/lib/apt/lists/* && rm -f /var/cache/apt/*.bin'
 }
